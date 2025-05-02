@@ -79,6 +79,16 @@ const Header = () => {
         <h1 className="text-lg font-bold">Wallet</h1>
       </div>
 
+      {/* Центральная ссылка на GitHub */}
+      <a
+        href="https://github.com/nikmakpak"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-yellow-400 hover:text-yellow-300 transition-colors text-sm font-medium absolute left-1/2 transform -translate-x-1/2"
+      >
+        made by nikmak
+      </a>
+
       <div className="flex items-center gap-2">
         <ModeToggle />
 

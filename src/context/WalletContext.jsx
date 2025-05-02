@@ -11,12 +11,12 @@ export const WalletProvider = ({ children }) => {
     const savedCurrency = localStorage.getItem("currency");
     return savedCurrency || "";
   });
-  
+
   const [transactions, setTransactions] = useState(() => {
     const savedTransactions = localStorage.getItem("transactions");
     return savedTransactions ? JSON.parse(savedTransactions) : [];
   });
-  
+
   const [isFirstVisit, setIsFirstVisit] = useState(() => {
     return !localStorage.getItem("currency");
   });
@@ -47,9 +47,9 @@ export const WalletProvider = ({ children }) => {
   const calculateRubleBalance = () => {
     return transactions.reduce((total, transaction) => {
       if (transaction.type === "deposit") {
-        return total + (transaction.amount * transaction.rate);
+        return total + transaction.amount * transaction.rate;
       } else {
-        return total - (transaction.amount * transaction.rate);
+        return total - transaction.amount * transaction.rate;
       }
     }, 0);
   };
@@ -60,9 +60,13 @@ export const WalletProvider = ({ children }) => {
       ...transaction,
       id: Date.now(),
       date: transaction.date || new Date().toISOString(),
-      balanceAfter: calculateBalance() + (transaction.type === "deposit" ? transaction.amount : -transaction.amount)
+      balanceAfter:
+        calculateBalance() +
+        (transaction.type === "deposit"
+          ? transaction.amount
+          : -transaction.amount),
     };
-    
+
     setTransactions([newTransaction, ...transactions]);
   };
 
@@ -77,7 +81,14 @@ export const WalletProvider = ({ children }) => {
     if (!type || type === "all") {
       return transactions;
     }
-    return transactions.filter(transaction => transaction.type === type);
+    return transactions.filter((transaction) => transaction.type === type);
+  };
+
+  // Delete a transaction by ID
+  const deleteTransaction = (id) => {
+    setTransactions(
+      transactions.filter((transaction) => transaction.id !== id)
+    );
   };
 
   const value = {
@@ -88,12 +99,11 @@ export const WalletProvider = ({ children }) => {
     calculateRubleBalance,
     addTransaction,
     setupCurrency,
-    filterTransactions
+    filterTransactions,
+    deleteTransaction,
   };
 
   return (
-    <WalletContext.Provider value={value}>
-      {children}
-    </WalletContext.Provider>
+    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
   );
 };
